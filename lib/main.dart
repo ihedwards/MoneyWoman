@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-//for the test
 void main() {
   runApp(const MyApp());
 }
@@ -55,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.attach_money), label: 'Expenses'),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
+          BottomNavigationBarItem(icon: Icon(Icons.data_array), label: 'Data'),
           BottomNavigationBarItem(
               icon: Icon(Icons.monetization_on), label: 'Income'),
         ],
@@ -64,42 +63,46 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class Income extends StatefulWidget {
-  const Income({Key? key}) : super(key: key);
+class Expenses extends StatefulWidget {
+  const Expenses({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _IncomeState createState() => _IncomeState();
+  _ExpensesState createState() => _ExpensesState();
 }
 
-class _IncomeState extends State<Income> {
+class _ExpensesState extends State<Expenses> {
   bool showForm = false;
+
+  void _toggleFormVisibility() {
+    setState(() {
+      showForm = !showForm;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  showForm = true;
-                });
-              },
-              child: const Text('Open Form'),
+        color: Colors.white,
+        child: Center(
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: _toggleFormVisibility,
+                  child: const Text('Add Income'),
+                ),
+                if (showForm)
+                  MyCustomForm(
+                    title: 'Income',
+                    fields: const ['Date', 'Amount Spent', 'Where'],
+                    onFormClosed: _toggleFormVisibility,
+                  ),
+              ],
             ),
-            if (showForm)
-              const MyCustomForm(
-                title: 'Expenses',
-                fields: ['Date', 'Amount Spent', 'Where'],
-              ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }
 
@@ -120,39 +123,44 @@ class Data extends StatelessWidget {
   }
 }
 
-class Expenses extends StatefulWidget {
-  const Expenses({Key? key}) : super(key: key);
+class Income extends StatefulWidget {
+  const Income({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _ExpensesState createState() => _ExpensesState();
+  _IncomeState createState() => _IncomeState();
 }
 
-class _ExpensesState extends State<Expenses> {
+class _IncomeState extends State<Income> {
   bool showForm = false;
+
+  void _toggleFormVisibility() {
+    setState(() {
+      showForm = !showForm;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  showForm = true;
-                });
-              },
-              child: const Text('Open Form'),
-            ),
-            if (showForm)
-              const MyCustomForm(
-                title: 'Income',
-                fields: ['Date', 'Amount Earned', 'Where'],
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: _toggleFormVisibility,
+                child: const Text('Add Expense'),
               ),
-          ],
+              if (showForm)
+                MyCustomForm(
+                  title: 'Expenses',
+                  fields: const ['Date', 'Amount Earned', 'Where'],
+                  onFormClosed: _toggleFormVisibility,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -162,9 +170,14 @@ class _ExpensesState extends State<Expenses> {
 class MyCustomForm extends StatefulWidget {
   final String title;
   final List<String> fields;
+  final VoidCallback onFormClosed;
 
-  const MyCustomForm({Key? key, required this.title, required this.fields})
-      : super(key: key);
+  const MyCustomForm({
+    Key? key,
+    required this.title,
+    required this.fields,
+    required this.onFormClosed,
+  }) : super(key: key);
 
   @override
   MyCustomFormState createState() => MyCustomFormState();
@@ -174,8 +187,6 @@ class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
   late List<TextEditingController> controllers;
   List<Map<String, String>> tableData = [];
-
-  bool showForm = true;
 
   @override
   void initState() {
@@ -187,9 +198,8 @@ class MyCustomFormState extends State<MyCustomForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
+        key: _formKey,
+        child: Column(children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -226,22 +236,19 @@ class MyCustomFormState extends State<MyCustomForm> {
                     widget.fields[i]: controllers[i].text,
                 };
                 setState(() {
-                  showForm = false;
                   tableData.add(data);
                 });
                 _formKey.currentState!.reset();
               }
             },
           ),
-          if (showForm)
-            ElevatedButton(
-              child: const Text("Go back"),
-              onPressed: () {
-                setState(() {
-                  showForm = false;
-                });
-              },
-            ),
+          ElevatedButton(
+            child: const Text("Go back"),
+            onPressed: () {
+              setState(() {});
+              widget.onFormClosed(); // Notify that the form is closed
+            },
+          ),
           if (tableData.isNotEmpty)
             DataTable(
               columns: widget.fields.map<DataColumn>((String field) {
@@ -252,10 +259,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                   for (int i = 0; i < widget.fields.length; i++)
                     DataCell(Text(data[widget.fields[i]]!)),
                 ]);
-              }).toList(),
-            ),
-        ],
-      ),
-    );
+              }).toList(), // Convert the Iterable<DataRow> to List<DataRow>
+            )
+        ]));
   }
 }
