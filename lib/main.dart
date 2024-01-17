@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Full Stack Programming Assistance',
+      title: 'Ella is trying her best',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
@@ -32,9 +32,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
-    const Income(),
-    const Data(),
     const Expenses(),
+    const Data(),
+    const Income(),
   ];
 
   @override
@@ -53,10 +53,10 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.attach_money), label: 'Expenses'),
+              icon: Icon(Icons.attach_money), label: 'Income'),
           BottomNavigationBarItem(icon: Icon(Icons.data_array), label: 'Data'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.monetization_on), label: 'Income'),
+              icon: Icon(Icons.monetization_on), label: 'Expenses'),
         ],
       ),
     );
@@ -83,26 +83,42 @@ class _ExpensesState extends State<Expenses> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.white,
-        child: Center(
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Column(
-              children: [
-                ElevatedButton(
-                  onPressed: _toggleFormVisibility,
-                  child: const Text('Add Income'),
+      color: Colors.white,
+      child: Center(
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: _toggleFormVisibility,
+                child: const Text('Add Expnese'),
+                
+              ),
+               RichText(
+                text: TextSpan(
+                  text: 'Total Spent:',
+                  style: DefaultTextStyle.of(context).style,
+                )
+              ),
+              if (showForm)
+                MyCustomForm(
+                  title: 'Expenses',
+                  fields: const ['Date', 'Amount Spent', 'Where'],
+                  onFormClosed: _toggleFormVisibility,
                 ),
-                if (showForm)
-                  MyCustomForm(
-                    title: 'Income',
-                    fields: const ['Date', 'Amount Spent', 'Where'],
-                    onFormClosed: _toggleFormVisibility,
-                  ),
-              ],
-            ),
+              Visibility(
+                visible: true,
+                child: DataTable(
+                  columns: const [
+                    DataColumn(label: Text('Date')),
+                    DataColumn(label: Text('Amount Earned')),
+                    DataColumn(label: Text('Where')),
+                  ],
+                  rows: const [],
+                ),
+              ),
+            ],
           ),
-        ));
+        ),
+      );
   }
 }
 
@@ -113,13 +129,28 @@ class Data extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: const Center(
-        child: Text(
-          'History',
-          style: TextStyle(fontSize: 30),
-        ),
+      child: Center(
+          child: Column(
+            children:[
+          const Text(
+            '  Data',
+            style: TextStyle(fontSize: 20),
+          ),
+          Row(
+            children: [
+            RichText(
+              text: TextSpan(
+              text: "Total Expenses:",
+              style: DefaultTextStyle.of(context).style,
+ )),
+            RichText(
+              text: TextSpan(
+              text: "Total Income:",
+              style: DefaultTextStyle.of(context).style,
+ ))
+        ]),]
       ),
-    );
+    ));
   }
 }
 
@@ -133,10 +164,23 @@ class Income extends StatefulWidget {
 
 class _IncomeState extends State<Income> {
   bool showForm = false;
+  bool isButtonVisible = true;
 
   void _toggleFormVisibility() {
     setState(() {
       showForm = !showForm;
+    });
+  }
+
+  void hideButton() {
+    setState(() {
+      isButtonVisible = false;
+    });
+  }
+
+  void showButton() {
+    setState(() {
+      isButtonVisible = true;
     });
   }
 
@@ -145,22 +189,47 @@ class _IncomeState extends State<Income> {
     return Container(
       color: Colors.white,
       child: Center(
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: Column(
-            children: [
-              ElevatedButton(
-                onPressed: _toggleFormVisibility,
-                child: const Text('Add Expense'),
+        child: Column(
+          children: [
+            Visibility(
+              visible: isButtonVisible,
+              child: ElevatedButton(
+                onPressed: () {
+                  _toggleFormVisibility();
+                  hideButton();
+                },
+                child: const Text('Add Income'),
               ),
-              if (showForm)
-                MyCustomForm(
-                  title: 'Expenses',
-                  fields: const ['Date', 'Amount Earned', 'Where'],
-                  onFormClosed: _toggleFormVisibility,
-                ),
-            ],
-          ),
+            ),
+            RichText(
+              text: TextSpan(
+                text: 'Total Earned:',
+                style: DefaultTextStyle.of(context).style,
+              ),
+            ),
+            if (showForm)
+              MyCustomForm(
+                title: 'Income',
+                fields: const ['Date', 'Amount Earned', 'Where'],
+                onFormClosed: () {
+                  setState(() {
+                    _toggleFormVisibility();
+                    showButton();
+                  });
+                },
+              ),
+            Visibility(
+              visible: true,
+              child: DataTable(
+                columns: const [
+                  DataColumn(label: Text('Date')),
+                  DataColumn(label: Text('Amount Earned')),
+                  DataColumn(label: Text('Where')),
+                ],
+                rows: const [],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -198,8 +267,9 @@ class MyCustomFormState extends State<MyCustomForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
-        key: _formKey,
-        child: Column(children: <Widget>[
+      key: _formKey,
+      child: Column(
+        children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -249,18 +319,8 @@ class MyCustomFormState extends State<MyCustomForm> {
               widget.onFormClosed(); // Notify that the form is closed
             },
           ),
-          if (tableData.isNotEmpty)
-            DataTable(
-              columns: widget.fields.map<DataColumn>((String field) {
-                return DataColumn(label: Text(field));
-              }).toList(),
-              rows: tableData.map<DataRow>((Map<String, String> data) {
-                return DataRow(cells: [
-                  for (int i = 0; i < widget.fields.length; i++)
-                    DataCell(Text(data[widget.fields[i]]!)),
-                ]);
-              }).toList(), // Convert the Iterable<DataRow> to List<DataRow>
-            )
-        ]));
+        ],
+      ),
+    );
   }
 }
