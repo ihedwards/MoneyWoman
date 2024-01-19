@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,6 +31,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<Map<String, String>> tableData = [];
   int _currentIndex = 0;
   final List<Widget> _pages = [
     const Expenses(),
@@ -53,10 +55,10 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.attach_money), label: 'Income'),
+              icon: Icon(Icons.attach_money), label: 'Expenses'),
           BottomNavigationBarItem(icon: Icon(Icons.data_array), label: 'Data'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.monetization_on), label: 'Expenses'),
+              icon: Icon(Icons.monetization_on), label: 'Income'),
         ],
       ),
     );
@@ -73,10 +75,22 @@ class Expenses extends StatefulWidget {
 
 class _ExpensesState extends State<Expenses> {
   bool showForm = false;
+    bool isButtonVisible = true;
 
   void _toggleFormVisibility() {
     setState(() {
       showForm = !showForm;
+    });
+  }
+  void hideButton() {
+    setState(() {
+      isButtonVisible = false;
+    });
+  }
+
+  void showButton() {
+    setState(() {
+      isButtonVisible = true;
     });
   }
 
@@ -87,10 +101,15 @@ class _ExpensesState extends State<Expenses> {
       child: Center(
           child: Column(
             children: [
-              ElevatedButton(
-                onPressed: _toggleFormVisibility,
+               Visibility(
+              visible: isButtonVisible,
+              child: ElevatedButton(
+                onPressed: () {
+                  _toggleFormVisibility();
+                  hideButton();
+                },
                 child: const Text('Add Expnese'),
-                
+              )
               ),
                RichText(
                 text: TextSpan(
@@ -102,8 +121,13 @@ class _ExpensesState extends State<Expenses> {
                 MyCustomForm(
                   title: 'Expenses',
                   fields: const ['Date', 'Amount Spent', 'Where'],
-                  onFormClosed: _toggleFormVisibility,
-                ),
+                  onFormClosed: () {
+                  setState(() {
+                    _toggleFormVisibility();
+                    showButton();
+                  });
+                },
+              ),
               Visibility(
                 visible: true,
                 child: DataTable(
@@ -286,10 +310,12 @@ class MyCustomFormState extends State<MyCustomForm> {
               ],
             ),
           ),
-          for (int i = 0; i < widget.fields.length; i++)
+          for (int i = 0; i < widget.fields.length; i++) 
             TextFormField(
+              keyboardType: TextInputType.number,
               controller: controllers[i],
               decoration: InputDecoration(labelText: widget.fields[i]),
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter ${widget.fields[i]}';
@@ -297,18 +323,24 @@ class MyCustomFormState extends State<MyCustomForm> {
                 return null;
               },
             ),
+            TextFormField(
+              controller: controllers[2],
+              decoration: InputDecoration(labelText: widget.fields[2]),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter ${widget.fields[1]}';
+                }
+                return null;
+              },
+            ),
+
           ElevatedButton(
             child: const Text("Submit"),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                final data = {
-                  for (int i = 0; i < widget.fields.length; i++)
-                    widget.fields[i]: controllers[i].text,
-                };
-                setState(() {
-                  tableData.add(data);
-                });
-                _formKey.currentState!.reset();
+              storeData(); // Call storeData to store form data
+              _formKey.currentState!.reset();
+              widget.onFormClosed();
               }
             },
           ),
@@ -323,4 +355,13 @@ class MyCustomFormState extends State<MyCustomForm> {
       ),
     );
   }
+void storeData() {
+  final Map<String, String> data = {};
+  for (int i = 0; i < widget.fields.length; i++) {
+    data[widget.fields[i]] = controllers[i].text;
+  }
+  setState(() {
+    tableData.add(data);
+  });
+}
 }
