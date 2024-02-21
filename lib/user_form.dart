@@ -89,7 +89,6 @@ class MyCustomFormState extends State<MyCustomForm> {
           ElevatedButton(
             child: const Text("Go back"),
             onPressed: () {
-              setState(() {});
               widget.onFormClosed(); // Notify that the form is closed
             },
           ),

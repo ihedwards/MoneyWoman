@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Expenses extends StatefulWidget {
-  const Expenses({Key? key}) : super(key: key);
+  const Expenses({super.key});
   @override
   // ignore: library_private_types_in_public_api
   _ExpensesState createState() => _ExpensesState();
@@ -55,7 +55,7 @@ class _ExpensesState extends State<Expenses> {
               if (showForm)
                 MyCustomForm(
                   title: 'Expenses',
-                  fields: const ['Date', 'Amount Spent', 'Where'],
+                  fields: ['Date', 'Amount Spent', 'Where'],
                   onFormClosed: () {
                   setState(() {
                     _toggleFormVisibility();
@@ -81,5 +81,5 @@ class _ExpensesState extends State<Expenses> {
   }
   
   // ignore: non_constant_identifier_names
-  MyCustomForm({required String title, required List<String> fields, required Null Function() onFormClosed}) {}
+MyCustomForm({required String title, required List<String> fields, required void Function() onFormClosed}) {}
 }

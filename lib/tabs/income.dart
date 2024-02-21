@@ -82,5 +82,5 @@ class _IncomeState extends State<Income> {
   }
   
   // ignore: non_constant_identifier_names
-  MyCustomForm({required String title, required List<String> fields, required Null Function() onFormClosed}) {}
+MyCustomForm({required String title, required List<String> fields, required void Function() onFormClosed}) {}
 }
