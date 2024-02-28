@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 class MyCustomForm extends StatefulWidget {
   final String title;
   final List<String> fields;
   final VoidCallback onFormClosed;
+  final String tital; // Correct the variable name to 'title'
 
-  const MyCustomForm({
-    Key? key,
+  MyCustomForm({
+    Key? key, // Use Key? key instead of super.key
     required this.title,
     required this.fields,
     required this.onFormClosed,
+    required this.tital, // Correct the parameter name to 'title'
   }) : super(key: key);
 
   @override
@@ -26,8 +27,10 @@ class MyCustomFormState extends State<MyCustomForm> {
   @override
   void initState() {
     super.initState();
-    controllers =
-        List.generate(widget.fields.length, (index) => TextEditingController());
+    controllers = List.generate(
+      widget.fields.length,
+      (index) => TextEditingController(),
+    );
   }
 
   @override
@@ -52,7 +55,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               ],
             ),
           ),
-          for (int i = 0; i < widget.fields.length; i++) 
+          for (int i = 0; i < widget.fields.length; i++)
             TextFormField(
               keyboardType: TextInputType.number,
               controller: controllers[i],
@@ -65,24 +68,23 @@ class MyCustomFormState extends State<MyCustomForm> {
                 return null;
               },
             ),
-            TextFormField(
-              controller: controllers[2],
-              decoration: InputDecoration(labelText: widget.fields[2]),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter ${widget.fields[1]}';
-                }
-                return null;
-              },
-            ),
-
+          TextFormField(
+            controller: controllers[2],
+            decoration: InputDecoration(labelText: widget.fields[2]),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter ${widget.fields[1]}';
+              }
+              return null;
+            },
+          ),
           ElevatedButton(
             child: const Text("Submit"),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-              storeData(); // Call storeData to store form data
-              _formKey.currentState!.reset();
-              widget.onFormClosed();
+                storeData(); // Call storeData to store form data
+                _formKey.currentState!.reset();
+                widget.onFormClosed();
               }
             },
           ),
@@ -96,13 +98,14 @@ class MyCustomFormState extends State<MyCustomForm> {
       ),
     );
   }
-void storeData() {
-  final Map<String, String> data = {};
-  for (int i = 0; i < widget.fields.length; i++) {
-    data[widget.fields[i]] = controllers[i].text;
+
+  void storeData() {
+    final Map<String, String> data = {};
+    for (int i = 0; i < widget.fields.length; i++) {
+      data[widget.fields[i]] = controllers[i].text;
+    }
+    setState(() {
+      tableData.add(data);
+    });
   }
-  setState(() {
-    tableData.add(data);
-  });
-}
 }
