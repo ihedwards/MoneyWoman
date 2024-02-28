@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_money_working/user_form.dart';
 
 class Income extends StatefulWidget {
   const Income({Key? key}) : super(key: key);
@@ -62,7 +63,7 @@ class _IncomeState extends State<Income> {
                     _toggleFormVisibility();
                     showButton();
                   });
-                },
+                }, tital: '',
               ),
             Visibility(
               visible: true,
@@ -80,7 +81,21 @@ class _IncomeState extends State<Income> {
       ),
     );
   }
+}  
+  // ignore: non_constant_identifier_names, must_be_immutable
+class MyCustomForm extends StatefulWidget {
+  final String tital;
+  final List<String> fields;
+  final VoidCallback onFormClosed;
   
-  // ignore: non_constant_identifier_names
-MyCustomForm({required String title, required List<String> fields, required void Function() onFormClosed}) {}
+  var title;
+
+   MyCustomForm({
+    super.key,
+    required this.title,
+    required this.fields,
+    required this.onFormClosed, required this.tital,
+  });
+@override
+MyCustomFormState createState() => MyCustomFormState();
 }

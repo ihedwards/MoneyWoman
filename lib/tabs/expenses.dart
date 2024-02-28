@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_money_working/user_form.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
@@ -53,15 +54,15 @@ class _ExpensesState extends State<Expenses> {
                 )
               ),
               if (showForm)
-                MyCustomForm(
+                MyCustomForm( //_TypeError (type 'Null) is not a subtype of type 'Widget'
                   title: 'Expenses',
-                  fields: ['Date', 'Amount Spent', 'Where'],
+                  fields: const ['Date', 'Amount Spent', 'Where'],
                   onFormClosed: () {
                   setState(() {
                     _toggleFormVisibility();
                     showButton();
                   });
-                },
+                }, tital: '',
               ),
               Visibility(
                 visible: true,
@@ -79,7 +80,22 @@ class _ExpensesState extends State<Expenses> {
         ),
       );
   }
+} 
+  // ignore: non_constant_identifier_names, must_be_immutable
+class MyCustomForm extends StatefulWidget {
+  final String tital;
+  final List<String> fields;
+  final VoidCallback onFormClosed;
   
-  // ignore: non_constant_identifier_names
-MyCustomForm({required String title, required List<String> fields, required void Function() onFormClosed}) {}
+  // ignore: prefer_typing_uninitialized_variables
+  var title;
+  
+   MyCustomForm({
+    super.key,
+    required this.title,
+    required this.fields,
+    required this.onFormClosed, required this.tital,
+  });
+@override
+MyCustomFormState createState() => MyCustomFormState();
 }
