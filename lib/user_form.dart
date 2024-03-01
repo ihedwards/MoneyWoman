@@ -5,14 +5,14 @@ class MyCustomForm extends StatefulWidget {
   final String title;
   final List<String> fields;
   final VoidCallback onFormClosed;
-  final String tital; // Correct the variable name to 'title'
+  final void Function(Map<String, String> expenseData) onFormSubmitted; // Corrected function type definition
 
-  MyCustomForm({
-    Key? key, // Use Key? key instead of super.key
+  const MyCustomForm({
+    Key? key,
     required this.title,
     required this.fields,
     required this.onFormClosed,
-    required this.tital, // Correct the parameter name to 'title'
+    required this.onFormSubmitted, // Corrected parameter name and function type
   }) : super(key: key);
 
   @override
@@ -22,6 +22,7 @@ class MyCustomForm extends StatefulWidget {
 class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
   late List<TextEditingController> controllers;
+ 
   List<Map<String, String>> tableData = [];
 
   @override
@@ -55,44 +56,30 @@ class MyCustomFormState extends State<MyCustomForm> {
               ],
             ),
           ),
-          for (int i = 0; i < widget.fields.length; i++)
-            TextFormField(
-              keyboardType: TextInputType.number,
-              controller: controllers[i],
-              decoration: InputDecoration(labelText: widget.fields[i]),
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter ${widget.fields[i]}';
-                }
-                return null;
-              },
-            ),
-          TextFormField(
-            controller: controllers[2],
-            decoration: InputDecoration(labelText: widget.fields[2]),
+          ...widget.fields.map((field) => TextFormField(
+            keyboardType: TextInputType.text, // You can adjust the keyboard type as per your requirement
+            controller: controllers[widget.fields.indexOf(field)],
+            decoration: InputDecoration(labelText: field),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter ${widget.fields[1]}';
+                return 'Please enter $field';
               }
               return null;
             },
-          ),
+          )),
           ElevatedButton(
-            child: const Text("Submit"),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                storeData(); // Call storeData to store form data
+                storeData();
                 _formKey.currentState!.reset();
                 widget.onFormClosed();
               }
             },
+            child: const Text('Submit'),
           ),
           ElevatedButton(
-            child: const Text("Go back"),
-            onPressed: () {
-              widget.onFormClosed(); // Notify that the form is closed
-            },
+            onPressed: widget.onFormClosed,
+            child: const Text('Go back'),
           ),
         ],
       ),
@@ -107,5 +94,6 @@ class MyCustomFormState extends State<MyCustomForm> {
     setState(() {
       tableData.add(data);
     });
+    widget.onFormSubmitted(data); // Notify parent widget about form submission
   }
 }
