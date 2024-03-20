@@ -73,7 +73,7 @@ class _IncomeState extends State<Income> {
                     showButton();
                   });
                 },
-                tital: '', // Ensure this parameter is correctly spelled as 'title'
+                tital: '', onFormSubmitted: (Map<String, String> expenseData) {  }, // Ensure this parameter is correctly spelled as 'title'
               ),
             Visibility(
               visible: true,

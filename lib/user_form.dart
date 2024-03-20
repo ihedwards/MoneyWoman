@@ -12,7 +12,7 @@ class MyCustomForm extends StatefulWidget {
     required this.title,
     required this.fields,
     required this.onFormClosed,
-    required this.onFormSubmitted, // Corrected parameter name and function type
+    required this.onFormSubmitted, required String tital, // Corrected parameter name and function type
   }) : super(key: key);
 
   @override

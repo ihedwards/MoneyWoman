@@ -46,7 +46,7 @@ class _ExpensesState extends State<Expenses> {
                 title: 'Expense Details',
                 fields: const ['Date', 'Amount Spent', 'Where'],
                 onFormClosed: _toggleFormVisibility,
-                onFormSubmitted: _addExpense,
+                onFormSubmitted: _addExpense, tital: '',
               ),
             if (tableData.isNotEmpty || tableData.isEmpty)
               DataTable(
