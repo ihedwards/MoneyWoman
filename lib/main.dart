@@ -3,13 +3,13 @@ import 'package:flutter_money_working/tabs/income.dart';
 import 'package:flutter_money_working/tabs/expenses.dart';
 import 'package:flutter_money_working/tabs/data.dart';
 
-
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,30 +18,36 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: const MyHomePage(title: 'MoneyWoman'),
+      home: MyHomePage(title: 'MoneyWoman'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title});
 
   final String title;
 
   @override
-  // ignore: library_private_types_in_public_api
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late List<Widget> _pages;
+
   List<Map<String, String>> tableData = [];
   int _currentIndex = 0;
-  final List<Widget> _pages = [
-    const Expenses(),
-    const Data(),
-    const Income(),
-  ];
 
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      Expenses(updateTableData: updateTableData),
+      Data(),
+      Income(),
+    ];
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,12 +65,25 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.attach_money), label: 'Expenses'),
-          BottomNavigationBarItem(icon: Icon(Icons.data_array), label: 'Data'),
+            icon: Icon(Icons.attach_money),
+            label: 'Expenses',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.monetization_on), label: 'Income'),
+            icon: Icon(Icons.data_array),
+            label: 'Data',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.monetization_on),
+            label: 'Income',
+          ),
         ],
       ),
     );
+  }
+
+  void updateTableData(List<Map<String, String>> newData) {
+    setState(() {
+      tableData = newData;
+    });
   }
 }
