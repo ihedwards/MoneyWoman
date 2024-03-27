@@ -18,13 +18,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: MyHomePage(title: 'MoneyWoman'),
+      home: const MyHomePage(title: 'MoneyWoman'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title});
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -43,8 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _pages = [
       Expenses(updateTableData: updateTableData),
-      Data(),
-      Income(),
+      const Data(),
+      const Income(),
     ];
   }
   

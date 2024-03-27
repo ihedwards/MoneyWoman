@@ -6,15 +6,15 @@ class MyCustomForm extends StatefulWidget {
   final String title;
   final List<String> fields;
   final VoidCallback onFormClosed;
-  final void Function(Map<String, String> expenseData) onFormSubmitted; // Corrected function type definition
+  final void Function(Map<String, String> expenseData) onFormSubmitted;
 
   const MyCustomForm({
-    super.key,
+    Key? key,
     required this.title,
     required this.fields,
     required this.onFormClosed,
-    required this.onFormSubmitted, required String tital, // Corrected parameter name and function type
-  });
+    required this.onFormSubmitted, required String tital,
+  }) : super(key: key);
 
   @override
   MyCustomFormState createState() => MyCustomFormState();
@@ -23,7 +23,7 @@ class MyCustomForm extends StatefulWidget {
 class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
   late List<TextEditingController> controllers;
-  late SharedPreferences prefs; //SharedPreferences instance
+  late SharedPreferences prefs;
 
   @override
   void initState() {
@@ -32,11 +32,18 @@ class MyCustomFormState extends State<MyCustomForm> {
       widget.fields.length,
       (index) => TextEditingController(),
     );
-    initSharedPreferences();
+    initSharedPreferences(); // Initialize SharedPreferences
   }
 
-  Future<void> initSharedPreferences() async  {
+  Future<void> initSharedPreferences() async {
     prefs = await SharedPreferences.getInstance();
+  }
+
+  @override
+  void dispose() {
+    // Dispose of TextEditingController instances
+    controllers.forEach((controller) => controller.dispose());
+    super.dispose();
   }
 
   @override
@@ -73,9 +80,9 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           )),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                storeData();
+                await storeData(); // Await the async method call
                 _formKey.currentState!.reset();
                 widget.onFormClosed();
               }
@@ -87,23 +94,25 @@ class MyCustomFormState extends State<MyCustomForm> {
     );
   }
 
-  void storeData() {
-  final Map<String, String> data = {};
-  for (int i = 0; i < widget.fields.length; i++) {
-    data[widget.fields[i]] = controllers[i].text;
+  Future<void> storeData() async {
+    final Map<String, String> data = {};
+    for (int i = 0; i < widget.fields.length; i++) {
+      data[widget.fields[i]] = controllers[i].text;
+    }
+    await saveDataToSharedPreferences(data); // Await the async method call
   }
-  saveDataToSharedPreferences(data);
-}
 
-Future<void> saveDataToSharedPreferences(
-    Map<String, String> data) async {
-  try {
-    String jsonData = jsonEncode(data); // Convert map to JSON string
-    await prefs.setString(widget.title, jsonData); // Store JSON string in shared preferences
-    print('Data stored in shared preferences: $data');
-    widget.onFormSubmitted(data);
-  } catch (error) {
-    print('Error saving data to shared preferences: $error');
-    // Handle error, if any
+  Future<void> saveDataToSharedPreferences(
+    Map<String, String> data,
+  ) async {
+    try {
+      String jsonData = jsonEncode(data);
+      await prefs.setString(widget.title, jsonData);
+      print('Data stored in shared preferences: $data');
+      widget.onFormSubmitted(data);
+    } catch (error) {
+      print('Error saving data to shared preferences: $error');
+      // Handle error, if any
+    }
   }
-}}
+}
