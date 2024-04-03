@@ -9,12 +9,12 @@ class MyCustomForm extends StatefulWidget {
   final void Function(Map<String, String> expenseData) onFormSubmitted;
 
   const MyCustomForm({
-    Key? key,
+    super.key,
     required this.title,
     required this.fields,
     required this.onFormClosed,
     required this.onFormSubmitted, required String tital,
-  }) : super(key: key);
+  });
 
   @override
   MyCustomFormState createState() => MyCustomFormState();
@@ -42,7 +42,9 @@ class MyCustomFormState extends State<MyCustomForm> {
   @override
   void dispose() {
     // Dispose of TextEditingController instances
-    controllers.forEach((controller) => controller.dispose());
+    for (var controller in controllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -108,9 +110,11 @@ class MyCustomFormState extends State<MyCustomForm> {
     try {
       String jsonData = jsonEncode(data);
       await prefs.setString(widget.title, jsonData);
+      // ignore: avoid_print
       print('Data stored in shared preferences: $data');
       widget.onFormSubmitted(data);
     } catch (error) {
+      // ignore: avoid_print
       print('Error saving data to shared preferences: $error');
       // Handle error, if any
     }
