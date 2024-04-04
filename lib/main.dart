@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_money_working/tabs/income.dart';
-import 'package:flutter_money_working/tabs/expenses.dart';
-import 'package:flutter_money_working/tabs/data.dart';
+import 'package:flutter/material.dart'; //main.dart can reference material.dart
+import 'package:flutter_money_working/tabs/income.dart'; //main.dart can reference income.dart
+import 'package:flutter_money_working/tabs/expenses.dart'; //main.dart can reference expenses.dart
+import 'package:flutter_money_working/tabs/data.dart'; //main.dart can reference data.dart
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,11 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Ella is trying her best',
-      theme: ThemeData(
+      title: 'Ella is trying her best', //lolll
+      theme: ThemeData( //theme in terms of colors
         primarySwatch: Colors.blueGrey,
       ),
-      home: const MyHomePage(title: 'MoneyWoman'),
+      home: const MyHomePage(title: 'MoneyWoman'), //title you see in top left corner
     );
   }
 }
@@ -43,9 +43,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _pages = [
-      Expenses(updateTableData: updateTableData),
-      const Data(),
-      Income(updateTableData: updateTableData),
+      Expenses(updateTableData: updateTableData), //allows for the expenses to be a tab and update table
+      const Data(), //creates data tab
+      Income(updateTableData: updateTableData), //allows for the expenses to be a tab and update table
 
     ];
   }
@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        backgroundColor: const Color.fromARGB(255, 200, 173, 207),
+        backgroundColor: const Color.fromARGB(255, 200, 173, 207), //colors
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _currentIndex = index;
           });
         },
-        items: const [
+        items: const [ //icons you see at the bottom of the screens w/ respective labels
           BottomNavigationBarItem(
             icon: Icon(Icons.attach_money),
             label: 'Expenses',
