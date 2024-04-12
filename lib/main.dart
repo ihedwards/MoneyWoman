@@ -2,6 +2,8 @@ import 'package:flutter/material.dart'; //main.dart can reference material.dart
 import 'package:flutter_money_working/tabs/income.dart'; //main.dart can reference income.dart
 import 'package:flutter_money_working/tabs/expenses.dart'; //main.dart can reference expenses.dart
 import 'package:flutter_money_working/tabs/data.dart'; //main.dart can reference data.dart
+import 'package:flutter_money_working/tabs/data_page.dart'; // Import DataPage
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _pages = [
       Expenses(updateTableData: updateTableData), //allows for the expenses to be a tab and update table
-      const Data(), //creates data tab
+      DataPage(), //creates data tab
       Income(updateTableData: updateTableData), //allows for the expenses to be a tab and update table
 
     ];

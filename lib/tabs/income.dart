@@ -1,5 +1,6 @@
 //ALL THE IMPORTS allow for the files to interact with one another/pull functions and data from one another. Also allows to import classes like dart: convert.
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
+import 'package:flutter_money_working/tabs/data.dart'; 
 import 'package:flutter_money_working/user_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert'; //used to convert data to json and back
@@ -18,6 +19,7 @@ class _IncomeState extends State<Income> {
   List<Map<String, String>> _tableData = [];
   bool _isFormVisible = false; //initialized form visibility and prefsinitialized to be false. no form and no shared preferences initialization
   bool _prefsInitialized = false;
+  DataComparison _dataComparison = DataComparison();
 
   @override
   void initState() { //how the initSharedPreferences are initialized
@@ -31,6 +33,7 @@ class _IncomeState extends State<Income> {
     setState(() { //setting state to allow the shared_preferences to be initialized
       _prefsInitialized = true;
     });
+    _dataComparison.compareData(); //call compareData when SharedPreferences in initialized
   }
 
   Future<void> _retrieveData() async {
