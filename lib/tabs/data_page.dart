@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_money_working/tabs/data.dart';
+import 'package:flutter_money_working/tabs/data.dart'; // Import your DataComparison class here
 
 class DataPage extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: DataComparison().compareData(),
+    return FutureBuilder<String>(
+      future: DataComparison().compareData(), // Invoke compareData method
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // or any loading indicator
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
         }
-        // You can return any widget here to display the comparison result
+        // Display the comparison result
         return Container(
-          child: const Text('Data Comparison'), // Example text widget
+          padding: const EdgeInsets.all(16.0),
+          alignment: Alignment.center,
+          child: Text(
+            snapshot.data ?? '', // Display the result from the future
+            style: const TextStyle(fontSize: 18.0),
+          ),
         );
       },
     );

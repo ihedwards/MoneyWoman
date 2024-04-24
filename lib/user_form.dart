@@ -1,7 +1,9 @@
-//allows user_form to reference/use/know things in material.dart and import outside info
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences package
-import 'dart:convert'; //json conversion class
+import 'package:flutter/services.dart'; // Import Services for keyboard type
+import 'package:intl/intl.dart'; // Import intl for date formatting
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_money_formatter/flutter_money_formatter.dart';
+import 'dart:convert';
 
 class MyCustomForm extends StatefulWidget {
   final String title;
@@ -9,22 +11,23 @@ class MyCustomForm extends StatefulWidget {
   final VoidCallback onFormClosed;
   final void Function(Map<String, String> expenseData) onFormSubmitted;
 
-  const MyCustomForm({ //requirements for custom form. Requirements never change
-    super.key,
+  // ignore: use_super_parameters
+  const MyCustomForm({
+    Key? key, // Fix typo in super constructor
     required this.title,
     required this.fields,
     required this.onFormClosed,
-    required this.onFormSubmitted, required String tital, //tital thingy, i honestly think it supposed to say title but it works soooooo
-  });
+    required this.onFormSubmitted,
+  }) : super(key: key); // Pass key to super constructor
 
   @override
-  MyCustomFormState createState() => MyCustomFormState(); //creating state
+  MyCustomFormState createState() => MyCustomFormState();
 }
 
 class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
-  late List<TextEditingController> controllers; //late = non-nullable variable will be initialized later. prevents code from getting mad at me
-  late SharedPreferences prefs; 
+  late List<TextEditingController> controllers;
+  late SharedPreferences prefs;
 
   @override
   void initState() {
@@ -33,15 +36,15 @@ class MyCustomFormState extends State<MyCustomForm> {
       widget.fields.length,
       (index) => TextEditingController(),
     );
-    initSharedPreferences(); // Initialize SharedPreferences
+    initSharedPreferences();
   }
 
   Future<void> initSharedPreferences() async {
-    prefs = await SharedPreferences.getInstance(); //prefs = wait to do sharedpreferences.getinstance until some other async operation is complete
+    prefs = await SharedPreferences.getInstance();
   }
 
   @override
-  void dispose() {  // Dispose of TextEditingController instances
+  void dispose() {
     for (var controller in controllers) {
       controller.dispose();
     }
@@ -54,13 +57,13 @@ class MyCustomFormState extends State<MyCustomForm> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          Padding( //spacing of form
+          Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const SizedBox(),
-                Text( //word and how the words look in the form
+                Text(
                   widget.title,
                   style: const TextStyle(
                     fontSize: 20,
@@ -70,29 +73,89 @@ class MyCustomFormState extends State<MyCustomForm> {
               ],
             ),
           ),
-          ...widget.fields.map((field) => TextFormField(
-            keyboardType: TextInputType.text,
-            controller: controllers[widget.fields.indexOf(field)],
-            decoration: InputDecoration(labelText: field),
-            validator: (value) { //entire form must be filled out before submitting
-              if (value == null || value.isEmpty) {
-                return 'Please enter $field';
-              }
-              return null;
-            },
-          )),
-          ElevatedButton( //creates submit button
+          ...widget.fields.map((field) {
+            if (field.toLowerCase().contains('date')) {
+              return buildDateField(field);
+            } else if (field.toLowerCase().contains('amount')) {
+              return buildAmountField(field);
+            } else {
+              return buildTextField(field);
+            }
+          }),
+          ElevatedButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                await storeData(); // Await the async method call to store the data
-                _formKey.currentState!.reset(); //form 'empties' and the button disappears when submitted
+                await storeData();
+                _formKey.currentState!.reset();
                 widget.onFormClosed();
               }
             },
-            child: const Text('Submit'), //text for the form
+            child: const Text('Submit'),
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildTextField(String field) {
+    return TextFormField(
+      controller: controllers[widget.fields.indexOf(field)],
+      decoration: InputDecoration(labelText: field),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter $field';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget buildDateField(String field) {
+  final TextEditingController controller =
+      controllers[widget.fields.indexOf(field)];
+
+  return TextFormField(
+    readOnly: true,
+    controller: controller,
+    decoration: InputDecoration(labelText: field),
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter $field';
+      }
+      return null;
+    },
+    onTap: () async {
+      final DateTime? pickedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime.now(),
+      );
+      if (pickedDate != null) {
+        setState(() {
+          final formattedDate = DateFormat.yMd().format(pickedDate); // Format pickedDate as a string
+          controller.text = formattedDate; // Assign the formatted date string to the controller's text
+        });
+      }
+    },
+  );
+}
+
+
+  Widget buildAmountField(String field) {
+    return TextFormField(
+      keyboardType: const TextInputType.numberWithOptions(decimal: true), // Numeric keyboard with decimal point
+      inputFormatters: <TextInputFormatter>[
+        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')), // Allow only digits and a single decimal point
+      ],
+      controller: controllers[widget.fields.indexOf(field)],
+      decoration: InputDecoration(labelText: field),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter $field';
+        }
+        return null;
+      },
     );
   }
 
@@ -101,14 +164,14 @@ class MyCustomFormState extends State<MyCustomForm> {
     for (int i = 0; i < widget.fields.length; i++) {
       data[widget.fields[i]] = controllers[i].text;
     }
-    await saveDataToSharedPreferences(data); // Await the async method call
+    await saveDataToSharedPreferences(data);
   }
 
   Future<void> saveDataToSharedPreferences(
     Map<String, String> data,
   ) async {
     try {
-      String jsonData = jsonEncode(data); //convert the input into json
+      String jsonData = jsonEncode(data);
       await prefs.setString(widget.title, jsonData);
       widget.onFormSubmitted(data);
     } catch (error) {

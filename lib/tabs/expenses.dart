@@ -106,11 +106,11 @@ class _ExpensesState extends State<Expenses> {
           if (_isFormVisible)
             MyCustomForm( //form called from the user_form.dart file
               title: '', //no title for the form, adds an empty line
-              fields: const ['When', 'Amount', 'Where'], //specific fields/input the form is asking for
+              fields: const ['Date', 'Amount', 'Where'], //specific fields/input the form is asking for
               onFormClosed: _toggleFormVisibility, //form disappears when the form is closed or submitted
               onFormSubmitted: (data) { //when the firm is submitted new data is added to the table
                 _addNewData(data);
-              }, tital: '', //this is here for some reason. there were errors when it wasn't there. it definitely does something
+              },
             ),
           if (!_isFormVisible && _tableData.isNotEmpty) //if the form is visible and there is data in the table
             DataTable( //data table shows up!

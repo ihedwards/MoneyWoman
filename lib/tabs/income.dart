@@ -19,7 +19,7 @@ class _IncomeState extends State<Income> {
   List<Map<String, String>> _tableData = [];
   bool _isFormVisible = false; //initialized form visibility and prefsinitialized to be false. no form and no shared preferences initialization
   bool _prefsInitialized = false;
-  DataComparison _dataComparison = DataComparison();
+  final DataComparison _dataComparison = DataComparison();
 
   @override
   void initState() { //how the initSharedPreferences are initialized
@@ -110,11 +110,11 @@ Widget build(BuildContext context) {
           if (_isFormVisible) //when form is visible call MyCustomForm from the user_form.dart
             MyCustomForm( 
               title: '', //empty title = added empty line = formating
-              fields: const ['When', 'Amount', 'Where'], //creates the fields. different from expenses.dart
+              fields: const ['Date', 'Amount', 'Where'], //creates the fields. different from expenses.dart
               onFormClosed: _toggleFormVisibility, //when the onFormClosed is called, call _toggleFormVisibility to actually close it
               onFormSubmitted: (data) { //when form is submitted add data
                 _addNewData(data);
-              }, tital: '', //still have no idea the purpose of this. but if it works it works
+              }, 
             ),
           if (!_isFormVisible && _tableData.isNotEmpty) //when the form is not visible and the table is showing
             DataTable( //how to table appears and the formatting. how data is added to the bottom of the table.

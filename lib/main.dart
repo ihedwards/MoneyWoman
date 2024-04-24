@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart'; //main.dart can reference material.dart
 import 'package:flutter_money_working/tabs/income.dart'; //main.dart can reference income.dart
 import 'package:flutter_money_working/tabs/expenses.dart'; //main.dart can reference expenses.dart
-import 'package:flutter_money_working/tabs/data.dart'; //main.dart can reference data.dart
 import 'package:flutter_money_working/tabs/data_page.dart'; // Import DataPage
 
 
