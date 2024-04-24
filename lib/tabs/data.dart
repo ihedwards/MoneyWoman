@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -46,10 +48,12 @@ class DataComparison {
     result = 'Income is greater than expenses.';
   } else if (totalIncome < totalExpenses) {
     result = 'Expenses are greater than income.';
-  } else {
+  } else if (totalIncome == totalExpenses) {
     result = 'Income and expenses are equal.';
-  }
-
+  } else
+    // ignore: curly_braces_in_flow_control_structures
+    result = 'No data avaliable';
+  
   print(result); // Print the result for debugging
   return result;
 }

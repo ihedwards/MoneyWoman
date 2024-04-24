@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import Services for keyboard type
 import 'package:intl/intl.dart'; // Import intl for date formatting
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'dart:convert';
 
 class MyCustomForm extends StatefulWidget {
@@ -28,7 +27,10 @@ class MyCustomFormState extends State<MyCustomForm> {
   final _formKey = GlobalKey<FormState>();
   late List<TextEditingController> controllers;
   late SharedPreferences prefs;
-
+  String formatCurrency(double amount) {
+    // Example implementation for currency formatting
+    return '\$${amount.toStringAsFixed(2)}'; // Formats as $123.45
+  }
   @override
   void initState() {
     super.initState();
@@ -142,22 +144,36 @@ class MyCustomFormState extends State<MyCustomForm> {
 }
 
 
-  Widget buildAmountField(String field) {
-    return TextFormField(
-      keyboardType: const TextInputType.numberWithOptions(decimal: true), // Numeric keyboard with decimal point
-      inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')), // Allow only digits and a single decimal point
-      ],
-      controller: controllers[widget.fields.indexOf(field)],
-      decoration: InputDecoration(labelText: field),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter $field';
-        }
-        return null;
-      },
-    );
-  }
+ Widget buildAmountField(String field) {
+  return TextFormField(
+    keyboardType: const TextInputType.numberWithOptions(decimal: true), // Numeric keyboard with decimal point
+    inputFormatters: <TextInputFormatter>[
+      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')), // Allow only digits and a single decimal point
+      // Custom TextInputFormatter to enforce currency format
+      TextInputFormatter.withFunction((oldValue, newValue) {
+        // Enforce currency format (e.g., $123,456.78)
+        final formattedValue = formatCurrency(double.parse(newValue.text));
+        return TextEditingValue(
+          text: formattedValue,
+          selection: TextSelection.collapsed(offset: formattedValue.length),
+        );
+      }),
+    ],
+    controller: controllers[widget.fields.indexOf(field)],
+    decoration: InputDecoration(labelText: field),
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter $field';
+      }
+      // Validate if the input matches currency format
+      if (!RegExp(r'^\$?\d{1,3}(,\d{3})*(\.\d{2})?$').hasMatch(value)) {
+        return 'Please enter a valid $field (e.g., \$123,456.78)';
+      }
+      return null;
+    },
+  );
+}
+
 
   Future<void> storeData() async {
     final Map<String, String> data = {};

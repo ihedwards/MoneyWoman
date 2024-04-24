@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_money_working/user_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class Expenses extends StatefulWidget {
   final Function(List<Map<String, String>>) updateTableData;
@@ -53,13 +54,31 @@ class _ExpensesState extends State<Expenses> {
     await _prefs.setString('expenses_data', jsonData); 
   }
 
-  void _addNewData(Map<String, String> newData) { // add new data to the table
-    setState(() {
-      _tableData.add(newData); //adding new data to the table
-      _saveData(); // Save data whenever it's updated
-    });
-    widget.updateTableData(_tableData); // Update data in parent widget
-  }
+
+void _addNewData(Map<String, String> newData) {
+  // Get the amount string from newData
+  final amountString = newData['Amount'] ?? '0.0';
+
+  // Create a NumberFormat instance for currency parsing
+  final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+
+  // Parse the amount string using the NumberFormat instance
+  final amount = currencyFormat.parse(amountString);
+
+  // Convert the parsed amount to a double
+  final parsedAmount = amount.toDouble();
+
+  // Update the newData map with the parsed amount
+  newData['Amount'] = parsedAmount.toStringAsFixed(2);
+
+  setState(() {
+    _tableData.add(newData);
+    _saveData();
+  });
+  widget.updateTableData(_tableData);
+}
+
+
 
   void _toggleFormVisibility() { //sets up toggleformvisibility, goes from visible to not.
     setState(() {
@@ -113,20 +132,28 @@ class _ExpensesState extends State<Expenses> {
               },
             ),
           if (!_isFormVisible && _tableData.isNotEmpty) //if the form is visible and there is data in the table
-            DataTable( //data table shows up!
-              columns: _tableData.isNotEmpty
-                  ? _tableData.first.keys.map((String key) {
-                return DataColumn(label: Text(key));
-              }).toList() //info is listed
-                  : [],
-              rows: _tableData.map((Map<String, String> data) {
-                return DataRow( //how data rows look and interact
-                  cells: data.keys.map((String key) {
-                    return DataCell(Text(data[key] ?? ''));
-                  }).toList(),
-                );
-              }).toList(),
-            ),
+            if (!_isFormVisible && _tableData.isNotEmpty)
+              DataTable(
+                columns: _tableData.isNotEmpty
+                    ? _tableData.first.keys.map((String key) {
+                        return DataColumn(label: Text(key));
+                      }).toList()
+                    : [],
+                rows: _tableData.map((Map<String, String> data) {
+                  return DataRow(
+                    cells: data.keys.map((String key) {
+                      if (key == 'Amount') {
+                        // Format the amount as currency
+                        final amount = double.tryParse(data[key] ?? '0.0') ?? 0.0;
+                        final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+                        return DataCell(Text(currencyFormat.format(amount)));
+                      } else {
+                        return DataCell(Text(data[key] ?? ''));
+                      }
+                    }).toList(),
+                  );
+                }).toList(),
+              ),
           if (_tableData.isEmpty && !_isFormVisible) //when there is not data and table = no table is shown = text appears to user
             const Center(
               child: Text('No Expense Data Available'),

@@ -4,6 +4,7 @@ import 'package:flutter_money_working/tabs/data.dart';
 import 'package:flutter_money_working/user_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert'; //used to convert data to json and back
+import 'package:intl/intl.dart';
 
 class Income extends StatefulWidget {
   final Function(List<Map<String, String>>) updateTableData;
@@ -11,6 +12,7 @@ class Income extends StatefulWidget {
   const Income({Key? key, required this.updateTableData}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _IncomeState createState() => _IncomeState(); //creates state
 }
 
@@ -56,13 +58,29 @@ class _IncomeState extends State<Income> {
     await _prefs.setString('income_data', jsonData); //await preferences
   }
 
-  void _addNewData(Map<String, String> newData) { //adding the new data to table
-    setState(() { //calling specific functions already declared
-      _tableData.add(newData); //add new data to end of the table
-      _saveData(); // Save data onto table. won't disappear
-    });
-    widget.updateTableData(_tableData); // Update data in parent widget
-  }
+
+void _addNewData(Map<String, String> newData) {
+  // Get the amount string from newData
+  final amountString = newData['Amount'] ?? '0.0';
+
+  // Create a NumberFormat instance for currency parsing
+  final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+
+  // Parse the amount string using the NumberFormat instance
+  final amount = currencyFormat.parse(amountString);
+
+  // Convert the parsed amount to a double
+  final parsedAmount = amount.toDouble();
+
+  // Update the newData map with the parsed amount
+  newData['Amount'] = parsedAmount.toStringAsFixed(2);
+
+  setState(() {
+    _tableData.add(newData);
+    _saveData();
+  });
+  widget.updateTableData(_tableData);
+}
 
   void _toggleFormVisibility() {
     setState(() {
