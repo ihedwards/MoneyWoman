@@ -96,7 +96,7 @@ Widget build(BuildContext context) {
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 8.0),
-          child: SizedBox( //WxH for the button
+          child: SizedBox( //W*H for the button
             width: 150,
             height: 40,
             child: ElevatedButton( //creates an elevated button
@@ -151,8 +151,9 @@ Widget build(BuildContext context) {
             ),
           if (_tableData.isEmpty && !_isFormVisible) //when the table is empty user sees following text
             const Center(
+              child: Padding(padding: EdgeInsets.all(150.0),
               child: Text('No Income Data Available'),
-            ),
+            )),
           
         ],
       ),

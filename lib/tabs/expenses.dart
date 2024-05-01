@@ -57,7 +57,7 @@ class _ExpensesState extends State<Expenses> {
 
 void _addNewData(Map<String, String> newData) {
   // Get the amount string from newData
-  final amountString = newData['Amount'] ?? '0.0';
+  final amountString = newData['Amount'] ?? '00.0';
 
   // Create a NumberFormat instance for currency parsing
   final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: '\$');
@@ -156,8 +156,10 @@ void _addNewData(Map<String, String> newData) {
               ),
           if (_tableData.isEmpty && !_isFormVisible) //when there is not data and table = no table is shown = text appears to user
             const Center(
-              child: Text('No Expense Data Available'),
-            ),
+              child: Padding(
+                padding: EdgeInsets.all(150.0),
+                child: Text('No Expense Data Available'),
+            )),
     
           
       ],

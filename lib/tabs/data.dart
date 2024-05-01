@@ -1,7 +1,17 @@
-import 'dart:html';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+
+class ComparisonResult {
+  final String result;
+  final double totalIncome;
+  final double totalExpenses;
+
+  ComparisonResult({
+    required this.result,
+    required this.totalIncome,
+    required this.totalExpenses,
+  });
+}
 
 class DataComparison {
   Future<List<Map<String, String>>> retrieveIncomeData() async {
@@ -36,27 +46,30 @@ class DataComparison {
     return [];
   }
 
-  Future<String> compareData() async {
-  List<Map<String, String>> incomeData = await retrieveIncomeData();
-  List<Map<String, String>> expensesData = await retrieveExpensesData();
+  Future<ComparisonResult> compareData() async {
+    List<Map<String, String>> incomeData = await retrieveIncomeData();
+    List<Map<String, String>> expensesData = await retrieveExpensesData();
 
-  double totalIncome = _calculateTotalAmount(incomeData);
-  double totalExpenses = _calculateTotalAmount(expensesData);
+    double totalIncome = _calculateTotalAmount(incomeData);
+    double totalExpenses = _calculateTotalAmount(expensesData);
 
-  String result;
-  if (totalIncome > totalExpenses) {
-    result = 'Income is greater than expenses.';
-  } else if (totalIncome < totalExpenses) {
-    result = 'Expenses are greater than income.';
-  } else if (totalIncome == totalExpenses) {
-    result = 'Income and expenses are equal.';
-  } else
-    // ignore: curly_braces_in_flow_control_structures
-    result = 'No data avaliable';
-  
-  print(result); // Print the result for debugging
-  return result;
-}
+    String result;
+    if (totalIncome > totalExpenses) {
+      result = 'Income is greater than expenses.';
+    } else if (totalIncome < totalExpenses) {
+      result = 'Expenses are greater than income.';
+    } else if (totalIncome == totalExpenses && totalIncome != 0) {
+      result = 'Income and expenses are equal.';
+    } else {
+      result = 'No data available';
+    }
+
+    return ComparisonResult(
+      result: result,
+      totalIncome: totalIncome,
+      totalExpenses: totalExpenses,
+    );
+  }
 
   double _calculateTotalAmount(List<Map<String, String>> data) {
     double totalAmount = 0;
