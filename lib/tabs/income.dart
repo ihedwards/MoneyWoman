@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 class Income extends StatefulWidget {
   final Function(List<Map<String, String>>) updateTableData;
 
-  const Income({Key? key, required this.updateTableData}) : super(key: key);
+  const Income({super.key, required this.updateTableData});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -151,9 +151,12 @@ Widget build(BuildContext context) {
             ),
           if (_tableData.isEmpty && !_isFormVisible) //when the table is empty user sees following text
             const Center(
-              child: Padding(padding: EdgeInsets.all(150.0),
-              child: Text('No Income Data Available'),
-            )),
+              child: Padding(
+              padding: EdgeInsets.all(125.0),
+              child: 
+                Text('No Income Data Available',
+                style: TextStyle(fontSize: 20.0),
+            ))),
           
         ],
       ),

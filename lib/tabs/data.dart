@@ -1,4 +1,4 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart'; //imported stuff
 import 'dart:convert';
 
 class ComparisonResult {
@@ -14,7 +14,7 @@ class ComparisonResult {
 }
 
 class DataComparison {
-  Future<List<Map<String, String>>> retrieveIncomeData() async {
+  Future<List<Map<String, String>>> retrieveIncomeData() async { //bunch of needed but confusing things.
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? jsonData = prefs.getString('income_data');
     if (jsonData != null) {
@@ -30,7 +30,7 @@ class DataComparison {
     return [];
   }
 
-  Future<List<Map<String, String>>> retrieveExpensesData() async {
+  Future<List<Map<String, String>>> retrieveExpensesData() async { //getting all the data and decoding it
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? jsonData = prefs.getString('expenses_data');
     if (jsonData != null) {
@@ -46,14 +46,14 @@ class DataComparison {
     return [];
   }
 
-  Future<ComparisonResult> compareData() async {
+  Future<ComparisonResult> compareData() async { //comparison betweeen data. 
     List<Map<String, String>> incomeData = await retrieveIncomeData();
     List<Map<String, String>> expensesData = await retrieveExpensesData();
 
     double totalIncome = _calculateTotalAmount(incomeData);
     double totalExpenses = _calculateTotalAmount(expensesData);
 
-    String result;
+    String result; //actual comparisons using if else statements
     if (totalIncome > totalExpenses) {
       result = 'Income is greater than expenses.';
     } else if (totalIncome < totalExpenses) {
@@ -64,14 +64,14 @@ class DataComparison {
       result = 'No data available';
     }
 
-    return ComparisonResult(
+    return ComparisonResult( //used in data_page.dart
       result: result,
       totalIncome: totalIncome,
       totalExpenses: totalExpenses,
     );
   }
 
-  double _calculateTotalAmount(List<Map<String, String>> data) {
+  double _calculateTotalAmount(List<Map<String, String>> data) { //the math is mathing. the math behind it
     double totalAmount = 0;
     for (var entry in data) {
       totalAmount += double.tryParse(entry['Amount'] ?? '0') ?? 0;

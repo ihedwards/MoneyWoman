@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_money_working/tabs/data.dart'; // Import your DataComparison class here
 
 class DataPage extends StatelessWidget {
+  const DataPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ComparisonResult>(
