@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _pages = [
       Expenses(updateTableData: updateTableData), //allows for the expenses to be a tab and update table
-      DataPage(), //creates data tab
+      const DataPage(), //creates data tab
       Income(updateTableData: updateTableData), //allows for the expenses to be a tab and update table
 
     ];

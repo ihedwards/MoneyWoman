@@ -155,11 +155,13 @@ void _addNewData(Map<String, String> newData) {
                 }).toList(),
               ),
           if (_tableData.isEmpty && !_isFormVisible) //when there is not data and table = no table is shown = text appears to user
-            const Center(
+             const Center(
               child: Padding(
-                padding: EdgeInsets.all(150.0),
-                child: Text('No Expense Data Available'),
-            )),
+              padding: EdgeInsets.all(125.0),
+              child: 
+                Text('No Expense Data Available',
+                style: TextStyle(fontSize: 20.0),
+            ))),
     
           
       ],
