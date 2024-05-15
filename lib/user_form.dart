@@ -4,7 +4,7 @@ import 'package:intl/intl.dart'; // Import intl for date formatting
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-class MyCustomForm extends StatefulWidget {
+class MyCustomForm extends StatefulWidget { //all the important needed stuff for the form
   final String title;
   final List<String> fields;
   final VoidCallback onFormClosed;
@@ -29,7 +29,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   late SharedPreferences prefs;
   String formatCurrency(double amount) {
     // Example implementation for currency formatting
-    return '\$${amount.toStringAsFixed(2)}'; // Formats as $123.45
+    return '\$${amount.toStringAsFixed(2)}'; // Formats as $00.00
   }
   @override
   void initState() {
@@ -38,11 +38,11 @@ class MyCustomFormState extends State<MyCustomForm> {
       widget.fields.length,
       (index) => TextEditingController(),
     );
-    initSharedPreferences();
+    initSharedPreferences(); //initializing how the data is saved
   }
 
   Future<void> initSharedPreferences() async {
-    prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance(); //how shared preferences works
   }
 
   @override
@@ -54,14 +54,14 @@ class MyCustomFormState extends State<MyCustomForm> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { //putting everything in
     return Form(
       key: _formKey,
       child: Column(
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
+            child: Row( //alignment and style. asthetics
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const SizedBox(),
@@ -84,7 +84,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               return buildTextField(field);
             }
           }),
-          ElevatedButton(
+          ElevatedButton( //when button is pressed this stuff happens
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 await storeData();
@@ -92,7 +92,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 widget.onFormClosed();
               }
             },
-            child: const Text('Submit'),
+            child: const Text('Submit'), //words in button
           ),
         ],
       ),
@@ -101,11 +101,11 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   Widget buildTextField(String field) {
     return TextFormField(
-      controller: controllers[widget.fields.indexOf(field)],
+      controller: controllers[widget.fields.indexOf(field)], //have to have these requirements before submitting form
       decoration: InputDecoration(labelText: field),
       validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter $field';
+        if (value == null || value.isEmpty) { //no nulls
+          return 'Please enter $field'; //what is displayed when nulls appear
         }
         return null;
       },
@@ -119,7 +119,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   return TextFormField(
     readOnly: true,
     controller: controller,
-    decoration: InputDecoration(labelText: field),
+    decoration: InputDecoration(labelText: field), //same thing
     validator: (value) {
       if (value == null || value.isEmpty) {
         return 'Please enter $field';
@@ -127,7 +127,7 @@ class MyCustomFormState extends State<MyCustomForm> {
       return null;
     },
     onTap: () async {
-      final DateTime? pickedDate = await showDatePicker(
+      final DateTime? pickedDate = await showDatePicker( //allows the calendar to appear, pick the date you want
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2015, 8),
@@ -159,14 +159,13 @@ class MyCustomFormState extends State<MyCustomForm> {
         );
       }),
     ],
-    controller: controllers[widget.fields.indexOf(field)],
+    controller: controllers[widget.fields.indexOf(field)], //same thing
     decoration: InputDecoration(labelText: field),
     validator: (value) {
       if (value == null || value.isEmpty) {
         return 'Please enter $field';
       }
-      // Validate if the input matches currency format
-      if (!RegExp(r'^\$?\d{1,3}(,\d{3})*(\.\d{2})?$').hasMatch(value)) {
+      if (!RegExp(r'^\$?\d{1,3}(,\d{3})*(\.\d{2})?$').hasMatch(value)) { //is currency in right format
         return 'Please enter a valid $field (e.g., \$123,456.78)';
       }
       return null;
@@ -190,8 +189,7 @@ class MyCustomFormState extends State<MyCustomForm> {
       String jsonData = jsonEncode(data);
       await prefs.setString(widget.title, jsonData);
       widget.onFormSubmitted(data);
-    } catch (error) {
-      // Handle error, if any
+    } catch (error) { // Handle error, if any
     }
   }
 }
