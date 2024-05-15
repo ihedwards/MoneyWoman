@@ -6,17 +6,16 @@ class DataPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<ComparisonResult>(
+    return FutureBuilder<ComparisonResult>( //FutureBuilder builds UI based on latest snapshot of interaction with a 'future'
       future: DataComparison().compareData(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+      builder: (context, snapshot) { //creates widget tree based on the latest snapshot. Recieves 'BuildContext' and 'AsyncSnapshot' of data being fetched
+        if (snapshot.connectionState == ConnectionState.waiting) { //error messages and extracting data from the snapshot
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           final comparisonResult = snapshot.data!;
-          // Determine text color based on comparison result
-          Color textColor = comparisonResult.result == 'Income is greater than expenses.'
+          Color textColor = comparisonResult.result == 'Income is greater than expenses.'  // Determine text color based on comparison result
               ? const Color.fromARGB(255, 53, 143, 56) // Green color for higher income
               : comparisonResult.result == 'Expenses are greater than income.'
                   ? const Color.fromARGB(255, 148, 60, 54) // Red color for higher expenses
@@ -41,13 +40,13 @@ class DataPage extends StatelessWidget {
                     children: [
                       const SizedBox(width: 20),
                       Text( //display expenses
-                        'Total Expenses: ${comparisonResult.totalExpenses}',
+                        'Total Expenses: ${comparisonResult.totalExpenses}', //list the value of the total expenses
                         style: TextStyle(fontSize: 18.0, color: textColor),
                       ),
                       const SizedBox(width: 110),
                       Text( //display income
-                        'Total Income: ${comparisonResult.totalIncome}',
-                        style: TextStyle(fontSize: 18.0, color: textColor),
+                        'Total Income: ${comparisonResult.totalIncome}', //list the value fo the total income
+                        style: TextStyle(fontSize: 18.0, color: textColor), //styles the text
                       ),
                     ],
                   )
