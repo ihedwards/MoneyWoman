@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; //imports other files, without it all the files would be isolated and not able to reference each other
 import 'package:flutter_money_working/user_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -56,24 +56,19 @@ class _ExpensesState extends State<Expenses> {
 
 
 void _addNewData(Map<String, String> newData) {
-  // Get the amount string from newData
-  final amountString = newData['Amount'] ?? '00.0';
+  final amountString = newData['Amount'] ?? '00.0';   // Get the amount string from newData
 
-  // Create a NumberFormat instance for currency parsing
-  final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+  final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: '\$');   // Create a NumberFormat instance for currency parsing
 
-  // Parse the amount string using the NumberFormat instance
-  final amount = currencyFormat.parse(amountString);
+  final amount = currencyFormat.parse(amountString);   // Parse the amount string using the NumberFormat instance
 
-  // Convert the parsed amount to a double
-  final parsedAmount = amount.toDouble();
+  final parsedAmount = amount.toDouble();  // Convert the parsed amount to a double
 
-  // Update the newData map with the parsed amount
-  newData['Amount'] = parsedAmount.toStringAsFixed(2);
+  newData['Amount'] = parsedAmount.toStringAsFixed(2);   // Update the newData map with the parsed amount
 
-  setState(() {
-    _tableData.add(newData);
-    _saveData();
+  setState(() { //used to rebuild UI after updating state
+    _tableData.add(newData); //add new data to _tableData
+    _saveData(); //saves the data
   });
   widget.updateTableData(_tableData);
 }
@@ -113,7 +108,7 @@ void _addNewData(Map<String, String> newData) {
         ),
       ],
     ),
-    body: _prefsInitialized ? _buildBody() : _buildLoadingIndicator(),
+    body: _prefsInitialized ? _buildBody() : _buildLoadingIndicator(), //sets body of the scaffold widget based on if _prefsInitialized occurs, if so displays _buildBody, if not displays _buildLoadingIndicator
   );
 }
 
@@ -155,11 +150,11 @@ void _addNewData(Map<String, String> newData) {
                 }).toList(),
               ),
           if (_tableData.isEmpty && !_isFormVisible) //when there is not data and table = no table is shown = text appears to user
-             const Center(
+             const Center( //making it all look pretty
               child: Padding(
               padding: EdgeInsets.all(125.0),
               child: 
-                Text('No Expense Data Available',
+                Text('No Expense Data Available', //text you see on the screen
                 style: TextStyle(fontSize: 20.0),
             ))),
     
@@ -169,9 +164,9 @@ void _addNewData(Map<String, String> newData) {
     );
   }
 
-  Widget _buildLoadingIndicator() {
+  Widget _buildLoadingIndicator() { //display loading indicator
     return const Center(
-      child: CircularProgressIndicator(),
+      child: CircularProgressIndicator(), //circle thingy you see when stuff loads
     );
   }
 }
