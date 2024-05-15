@@ -1,7 +1,7 @@
-import 'package:shared_preferences/shared_preferences.dart'; //imported stuff
+import 'package:shared_preferences/shared_preferences.dart'; //imported stuff, needed to work
 import 'dart:convert';
 
-class ComparisonResult {
+class ComparisonResult { //creating stuff needed for comparing values
   final String result;
   final double totalIncome;
   final double totalExpenses;
@@ -14,7 +14,7 @@ class ComparisonResult {
 }
 
 class DataComparison {
-  Future<List<Map<String, String>>> retrieveIncomeData() async { //bunch of needed but confusing things.
+  Future<List<Map<String, String>>> retrieveIncomeData() async { //bunch of needed but confusing things. Having to do with decoding json with the shared preferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? jsonData = prefs.getString('income_data');
     if (jsonData != null) {
