@@ -21,7 +21,7 @@ class _IncomeState extends State<Income> {
   List<Map<String, String>> _tableData = [];
   bool _isFormVisible = false; //initialized form visibility and prefsinitialized to be false. no form and no shared preferences initialization
   bool _prefsInitialized = false;
-  final DataComparison _dataComparison = DataComparison();
+  final DataComparison _dataComparison = DataComparison(); //creating datacomparison
 
   @override
   void initState() { //how the initSharedPreferences are initialized
@@ -60,26 +60,21 @@ class _IncomeState extends State<Income> {
 
 
 void _addNewData(Map<String, String> newData) {
-  // Get the amount string from newData
-  final amountString = newData['Amount'] ?? '0.0';
+  final amountString = newData['Amount'] ?? '0.0';   // Get the amount string from newData
 
-  // Create a NumberFormat instance for currency parsing
-  final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: '\$');
+  final currencyFormat = NumberFormat.currency(locale: 'en_US', symbol: '\$');   // Create a NumberFormat instance for currency parsing
 
-  // Parse the amount string using the NumberFormat instance
-  final amount = currencyFormat.parse(amountString);
+  final amount = currencyFormat.parse(amountString);   // Parse the amount string using the NumberFormat instance
 
-  // Convert the parsed amount to a double
-  final parsedAmount = amount.toDouble();
+  final parsedAmount = amount.toDouble(); // Convert the parsed amount to a double
 
-  // Update the newData map with the parsed amount
-  newData['Amount'] = parsedAmount.toStringAsFixed(2);
+  newData['Amount'] = parsedAmount.toStringAsFixed(2);   // Update the newData map with the parsed amount
 
-  setState(() {
-    _tableData.add(newData);
-    _saveData();
+  setState(() { 
+    _tableData.add(newData); //adding data to _tableData / the table in general
+    _saveData(); //saving the data
   });
-  widget.updateTableData(_tableData);
+  widget.updateTableData(_tableData); //updates it
 }
 
   void _toggleFormVisibility() {
@@ -115,7 +110,7 @@ Widget build(BuildContext context) {
         ),
       ],
     ),
-    body: _prefsInitialized ? _buildBody() : _buildLoadingIndicator(),
+    body: _prefsInitialized ? _buildBody() : _buildLoadingIndicator(), //same thing as expenses
   );
 }
 
@@ -150,11 +145,11 @@ Widget build(BuildContext context) {
               }).toList(),
             ),
           if (_tableData.isEmpty && !_isFormVisible) //when the table is empty user sees following text
-            const Center(
+            const Center( //make it look pretty
               child: Padding(
               padding: EdgeInsets.all(125.0),
               child: 
-                Text('No Income Data Available',
+                Text('No Income Data Available', //what you initially see on the income page
                 style: TextStyle(fontSize: 20.0),
             ))),
           
