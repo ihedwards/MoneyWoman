@@ -1,3 +1,4 @@
+//issue @ line 155
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import Services for keyboard type
 import 'package:intl/intl.dart'; // Import intl for date formatting
@@ -152,7 +153,7 @@ class MyCustomFormState extends State<MyCustomForm> {
       // Custom TextInputFormatter to enforce currency format
       TextInputFormatter.withFunction((oldValue, newValue) {
         // Enforce currency format (e.g., $123,456.78)
-        final formattedValue = formatCurrency(double.parse(newValue.text));
+        final formattedValue = formatCurrency(double.parse(newValue.text)); //ISSUE!!!
         return TextEditingValue(
           text: formattedValue,
           selection: TextSelection.collapsed(offset: formattedValue.length),
